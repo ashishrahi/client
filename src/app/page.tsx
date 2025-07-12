@@ -1,9 +1,7 @@
-
+import { redirect } from "next/navigation";
 export default function Home() {
-  return (
-    <div>
+  
    
-     sadas
-    </div>
-  );
+    redirect("/import-logs");
+  
 }

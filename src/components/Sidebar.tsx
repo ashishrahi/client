@@ -23,11 +23,7 @@ const navItems: NavItem[] = [
     href: "/import-logs",
     icon: <ImportIcon size={20} />,
   },
-  {
-    name: "Manual Import",
-    href: "/manual-import",
-    icon: <ImportIcon size={20} />,
-  },
+ 
 ];
 
 export function Sidebar() {
