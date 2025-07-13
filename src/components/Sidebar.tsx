@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, ImportIcon, MenuIcon } from "lucide-react";
+import { ImportIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -13,11 +13,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: <LayoutDashboard size={20} />,
-  },
+ 
   {
     name: "Import Logs",
     href: "/import-logs",

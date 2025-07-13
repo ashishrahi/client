@@ -13,6 +13,11 @@ import { Button } from "@/components/ui/button";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useCreateLogMutation } from "../../hooks/useCreateLogMutation";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
+
+interface ErrorResponse {
+  message?: string;
+}
 
 type AddLogModalProps = {
   onClose: () => void;
@@ -27,13 +32,16 @@ type FormData = {
   timestamp: string;
   failedJobs: { reason: string }[];
 };
+interface AddLogResponse {
+  message: string;
+}
 
 const AddLogModal = ({ onClose }: AddLogModalProps) => {
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: {  },
   } = useForm<FormData>({
     defaultValues: {
       feedUrl: "",
@@ -61,21 +69,26 @@ const AddLogModal = ({ onClose }: AddLogModalProps) => {
 
    toast.promise(
   createLogMutation.mutateAsync(payload, {
-    onSuccess: (response: any) => {
+    onSuccess: () => {
       onClose();
     },
   }),
   {
     loading: "Adding log...",
-    success: (response: any) => {
-      // assuming backend returns something like { message: "Log created successfully" }
-      return response?.message || "Log added successfully!";
-    },
-    error: (err: any) => {
-      const backendMessage =
-        err?.response?.data?.message || err?.message || "Something went wrong.";
-      return backendMessage;
-    },
+   success: (response: AddLogResponse) => {
+  return response.message || "Log added successfully!";
+},
+    error: (err: unknown) => {
+  let backendMessage = "Something went wrong.";
+
+  if (err instanceof AxiosError) {
+    backendMessage = (err.response?.data as ErrorResponse)?.message || err.message || backendMessage;
+  } else if (err instanceof Error) {
+    backendMessage = err.message;
+  }
+
+  return backendMessage;
+},
   }
 );
 
@@ -146,8 +159,8 @@ const AddLogModal = ({ onClose }: AddLogModalProps) => {
             <DialogClose asChild>
               <Button variant="outline" type="button">Cancel</Button>
             </DialogClose>
-            <Button type="submit" disabled={createLogMutation.isLoading}>
-              {createLogMutation.isLoading ? "Adding..." : "Add"}
+            <Button type="submit" disabled={createLogMutation.isPending}>
+              {createLogMutation.isPending ? "Adding..." : "Add"}
             </Button>
           </DialogFooter>
         </form>

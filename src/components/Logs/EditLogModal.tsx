@@ -10,11 +10,13 @@ import { LogEntry } from "../../types/logs";
 import { useState } from "react";
 import { useUpdateLogMutation } from "@/hooks/useUpdateLogMutation";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 type EditLogModalProps = {
   log: LogEntry;
   onClose: () => void;
 };
+
 
 const EditLogModal = ({ log, onClose }: EditLogModalProps) => {
   const [totalFetched, setTotalFetched] = useState(log.totalFetched);
@@ -47,15 +49,17 @@ const EditLogModal = ({ log, onClose }: EditLogModalProps) => {
     updateLogMutation.mutate(
       { id: log._id, payload },
       {
-        onSuccess: (response) => {
+        onSuccess: () => {
           toast.success("Log updated successfully!", { position: "top-center" });
           onClose();
         },
-        onError: (error: any) => {
-          toast.error(
-            error?.response?.data?.message || "Failed to update log",
-            { position: "top-center" }
-          );
+        onError: (error: Error) => {
+          if (error instanceof AxiosError) {
+            const message = error.response?.data?.message || "Failed to update log";
+            toast.error(message, { position: "top-center" });
+          } else {
+            toast.error("Unexpected error occurred", { position: "top-center" });
+          }
         },
       }
     );
@@ -126,8 +130,8 @@ const EditLogModal = ({ log, onClose }: EditLogModalProps) => {
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={handleSave} disabled={updateLogMutation.isLoading}>
-            {updateLogMutation.isLoading ? "Saving..." : "Save"}
+          <Button onClick={handleSave} disabled={updateLogMutation.isPending}>
+            {updateLogMutation.isPending ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>

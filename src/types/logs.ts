@@ -12,4 +12,5 @@ export type LogEntry = {
   updatedJobs: number;
   timestamp: string;
   failedJobs: FailedJob[];
+  _id:string
 };
