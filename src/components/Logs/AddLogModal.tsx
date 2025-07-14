@@ -14,27 +14,8 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useCreateLogMutation } from "../../hooks/useCreateLogMutation";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import {FormData, ErrorResponse, AddLogModalProps, AddLogResponse} from '../../types/logs'
 
-interface ErrorResponse {
-  message?: string;
-}
-
-type AddLogModalProps = {
-  onClose: () => void;
-};
-
-type FormData = {
-  feedUrl: string;
-  totalFetched: number;
-  totalImported: number;
-  newJobs: number;
-  updatedJobs: number;
-  timestamp: string;
-  failedJobs: { reason: string }[];
-};
-interface AddLogResponse {
-  message: string;
-}
 
 const AddLogModal = ({ onClose }: AddLogModalProps) => {
   const {

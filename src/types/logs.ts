@@ -14,3 +14,26 @@ export type LogEntry = {
   failedJobs: FailedJob[];
   _id:string
 };
+
+export type FormData = {
+  feedUrl: string;
+  totalFetched: number;
+  totalImported: number;
+  newJobs: number;
+  updatedJobs: number;
+  timestamp: string;
+  failedJobs: { reason: string }[];
+};
+
+export interface ErrorResponse {
+  message?: string;
+}
+
+export type AddLogModalProps = {
+  onClose: () => void;
+};
+
+
+export interface AddLogResponse {
+  message: string;
+}
