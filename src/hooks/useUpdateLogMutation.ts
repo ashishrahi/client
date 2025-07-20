@@ -10,7 +10,9 @@ export const useUpdateLogMutation = () => {
     mutationFn: (data: { id: string; payload: Partial<LogEntry> }) =>
       axios.put(API_ENDPOINTS.UPDATE_LOG.replace(":id", data.id), data.payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["import-logs"] });
+      queryClient.invalidateQueries({ queryKey: ["import-logs"] }); // For all pages
+      // OR invalidate specific pages if using pagination:
+      queryClient.invalidateQueries({ queryKey: ["import-logs"], exact: false });
     },
   });
 };
