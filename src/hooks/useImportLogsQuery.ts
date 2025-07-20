@@ -19,5 +19,5 @@ export const useImportLogsQuery = (page: number, limit = 10) =>
     queryKey: ["import-logs", page],
     queryFn: () => fetchImportLogs(page, limit),
     placeholderData: (previousData) => previousData,
-    staleTime: 5000,
+    staleTime: 1000,
   });
