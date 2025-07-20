@@ -2,35 +2,33 @@ import React, { useState } from "react";
 import { LogEntry } from "../../types/logs";
 import PaginationControls from "../../components/PaginationControls";
 import EditLogModal from "./EditLogModal";
-import { EditIcon} from "lucide-react";
+import { EditIcon } from "lucide-react";
 
 type LogsTableProps = {
   logs: LogEntry[];
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 };
 
-const LogsTable: React.FC<LogsTableProps> = ({ logs }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const LogsTable: React.FC<LogsTableProps> = ({
+  logs,
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
   const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
-  const rowsPerPage = 5;
-
-  const totalPages = Math.ceil(logs.length / rowsPerPage);
-  const currentData = logs.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
 
   const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+    if (currentPage > 1) onPageChange(currentPage - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+    if (currentPage < totalPages) onPageChange(currentPage + 1);
   };
 
   return (
     <div className="w-full">
-     
-
       <div className="w-full overflow-x-auto rounded border border-gray-200">
         <table className="min-w-[800px] md:min-w-full table-auto text-sm text-left">
           <thead className="bg-gray-100 text-xs uppercase text-gray-600">
@@ -46,7 +44,7 @@ const LogsTable: React.FC<LogsTableProps> = ({ logs }) => {
             </tr>
           </thead>
           <tbody>
-            {currentData.map((log, i) => (
+            {logs.map((log, i) => (
               <tr key={i} className="hover:bg-gray-50 transition">
                 <td className="border px-2 md:px-3 py-2 break-words max-w-xs">{log.feedUrl}</td>
                 <td className="border px-2 md:px-3 py-2 text-center">{log.totalFetched}</td>

@@ -4,37 +4,34 @@ import LogsTable from "../../components/Logs/LogsTable";
 import { useImportLogsQuery } from "../../hooks/useImportLogsQuery";
 import { PlusCircle } from "lucide-react";
 import AddLogModal from "../../components/Logs/AddLogModal";
-import socket from "../../utils/socket"
+import socket from "../../utils/socket";
 
 export default function ImportLogsPage() {
-  const { data: initialLogs = [], isLoading, isError, error } = useImportLogsQuery();
-  const [logs, setLogs] = useState(initialLogs);
+  const [page, setPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  useEffect(() => {
-    // Sync logs once data is loaded
-    if (!isLoading && initialLogs.length > 0) {
-      setLogs(initialLogs);
-    }
-  }, [initialLogs, isLoading]);
+  const { data, isLoading, isError, error } = useImportLogsQuery(page, 10);
+  const logs = data?.logs || [];
 
   useEffect(() => {
     socket.connect();
 
     socket.on("new-log", (newLog) => {
-      console.log("Real-time log:", newLog);
-      setLogs((prev) => [newLog, ...prev]);
+      if (page === 1) {
+        logs.unshift(newLog);
+      }
     });
 
     return () => {
       socket.off("new-log");
       socket.disconnect();
     };
-  }, []);
+  }, [page, logs]);
 
   return (
     <main className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-gray-800">🗂 Import Logs</h1>
+
       <div className="flex justify-end mb-4">
         <button
           className="flex items-center gap-2 text-sm bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition"
@@ -47,10 +44,16 @@ export default function ImportLogsPage() {
 
       <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4">
         {isLoading && <p className="text-sm text-gray-500">Loading logs...</p>}
-        {isError && (
-          <p className="text-sm text-red-500">Error: {error.message}</p>
+        {isError && <p className="text-sm text-red-500">Error: {error.message}</p>}
+
+        {!isLoading && !isError && (
+          <LogsTable
+            logs={logs}
+            currentPage={page}
+            totalPages={data?.totalPages || 1}
+            onPageChange={setPage}
+          />
         )}
-        {!isLoading && !isError && <LogsTable logs={logs} />}
       </div>
 
       {showAddModal && <AddLogModal onClose={() => setShowAddModal(false)} />}
