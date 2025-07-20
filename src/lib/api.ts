@@ -1,4 +1,6 @@
-export const BASE_URL = "https://server-xfik.onrender.com/v1/api";
+// export const BASE_URL = "https://server-xfik.onrender.com/v1/api";
+
+export const BASE_URL = "https://server-2-0xix.onrender.com/v1/api";
 
 // export const BASE_URL = "http://localhost:3001/v1/api";
 
